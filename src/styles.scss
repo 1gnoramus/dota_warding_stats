@@ -1,0 +1,83 @@
+$primary-color: #242424;
+$secondary-color: #147683;
+$on-hover-color: rgb(13, 238, 13);
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+
+  color: rgba(255, 255, 255, 0.87);
+  background-color: $primary-color;
+  padding: 2vw;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  button {
+    padding: 1em;
+    a {
+      text-decoration: none;
+    }
+  }
+  button:hover {
+    cursor: pointer;
+    background-color: $on-hover-color;
+  }
+}
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2vw;
+}
+.proplayers_page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 3em;
+}
+.dota_map {
+  position: relative;
+  width: 550px;
+  height: 550px;
+  background: url("./assets/dota_map550.png") no-repeat center;
+  background-size: cover;
+}
+.obs_ward {
+  position: absolute;
+  top: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 20px;
+  background-color: #d7d716;
+}
+.sentry_ward {
+  position: absolute;
+  top: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 20px;
+  background-color: #1690d7;
+}
+
+table {
+  width: 80vw;
+  tr {
+    background-color: #1690d7;
+    border: solid 1px black;
+    cursor: pointer;
+
+    td {
+      text-align: center;
+      border: none;
+    }
+  }
+  tr:first-child {
+    background-color: #831414;
+  }
+}
