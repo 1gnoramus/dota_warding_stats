@@ -81,3 +81,17 @@ table {
     background-color: #831414;
   }
 }
+
+//PLAYER STATS COMPONENT
+.playerStatsComponent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 50px;
+
+  .player_info {
+    display: flex;
+    width: 80vw;
+    justify-content: space-between;
+  }
+}

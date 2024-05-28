@@ -6,6 +6,7 @@ import { ProPlayersPage } from "./ProPlayersPage";
 import { PublicPlayersPage } from "./PublicPlayersPage";
 import { TurboPlayersPage } from "./TurboPlayersPage";
 import { OverallPage } from "./OverallPage";
+import { ProMatchStats } from "./ProMatchStats";
 
 function App() {
   return (
@@ -26,6 +27,10 @@ function App() {
             element={<TurboPlayersPage></TurboPlayersPage>}
           ></Route>
           <Route path="/overall" element={<OverallPage></OverallPage>}></Route>
+          <Route
+            path="/player-stats"
+            element={<ProMatchStats></ProMatchStats>}
+          ></Route>
         </Routes>
       </div>
     </>
