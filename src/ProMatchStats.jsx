@@ -1,37 +1,48 @@
 import { useSelector } from "react-redux";
 import playerImage from "./assets/gh.jpg";
 import { useState } from "react";
+import { useGetRecentmatchByIdQuery, useGetmatchByIdQuery, useGetproPlayersQuery } from "../store/api";
 
 export function ProMatchStats() {
   const playerStats = useSelector((state) => state.playerStats);
   let [selectedTopic, setselectedTopic] = useState("stats");
+  let {
+    data: matchesList,
+    isLoading: matchesListisLoading,
+    error: matchesListerror,
+  } = useGetmatchByIdQuery(playerStats.playerStats.account_id);
+  let {
+    data: recentmatchesList,
+    isLoading: recentmatchesListisLoading,
+    error: recentmatchesListerror,
+  } = useGetRecentmatchByIdQuery(playerStats.playerStats.account_id);
 
-  let matchesList = [
-    {
-      id: 228337,
-      duration: "17:25",
-      result: "LOSE",
-      wardsPlaced: 5,
-    },
-    {
-      id: 228337,
-      duration: "17:25",
-      result: "LOSE",
-      wardsPlaced: 5,
-    },
-    {
-      id: 228337,
-      duration: "17:25",
-      result: "WIN",
-      wardsPlaced: 5,
-    },
-    {
-      id: 228337,
-      duration: "17:25",
-      result: "WIN",
-      wardsPlaced: 5,
-    },
-  ];
+  // let matchesList = [
+  //   {
+  //     id: 228337,
+  //     duration: "17:25",
+  //     result: "LOSE",
+  //     wardsPlaced: 5,
+  //   },
+  //   {
+  //     id: 228337,
+  //     duration: "17:25",
+  //     result: "LOSE",
+  //     wardsPlaced: 5,
+  //   },
+  //   {
+  //     id: 228337,
+  //     duration: "17:25",
+  //     result: "WIN",
+  //     wardsPlaced: 5,
+  //   },
+  //   {
+  //     id: 228337,
+  //     duration: "17:25",
+  //     result: "WIN",
+  //     wardsPlaced: 5,
+  //   },
+  // ];
   let obsLeft = 520;
   let sentryLeft = 220;
   return (
@@ -39,20 +50,14 @@ export function ProMatchStats() {
       <div className="player_info">
         <img
           style={{ width: "200px", height: "200px" }}
-          src={playerStats.playerStats.img_url}
+          src={playerStats.playerStats.avatarfull}
           alt=""
         />
         <div>
-          <h1
-            onClick={() => {
-              console.log(playerStats.playerStats);
-            }}
-          >
-            Player: {playerStats.playerStats.name}
-          </h1>
-          <h3>Team: {playerStats.playerStats.team}</h3>
-          <h3>Position: {playerStats.playerStats.position}</h3>
-          <h3>Matches Played: {playerStats.playerStats.matchesPlayed}</h3>
+          <h1>Player: {playerStats.playerStats.name}</h1>
+          <h3>Team: {playerStats.playerStats.team_name}</h3>
+          <h3>Position: {playerStats.playerStats.fantasy_role}</h3>
+          <h3>Account ID: {playerStats.playerStats.account_id}</h3>
         </div>
         <div></div>
       </div>
@@ -67,6 +72,7 @@ export function ProMatchStats() {
         <button
           onClick={() => {
             setselectedTopic("matches");
+            console.log(matchesList);
           }}
         >
           MATCHES
@@ -91,37 +97,42 @@ export function ProMatchStats() {
           </div>
         </>
       ) : selectedTopic == "matches" ? (
-        <table>
-          <h1>MATCHES PLAYED</h1>
-          <tbody>
-            <tr>
-              <td>MATCH ID</td>
-              <td>DURATION</td>
-              <td>RESULT</td>
-              <td>WARDS PLACED</td>
-            </tr>
-            {matchesList.map((match) => {
-              return (
-                <tr>
-                  <td
-                    onClick={() => {
-                      dispatch(addPlayer(player));
-                      navigate("/player-stats");
-                    }}
-                  >
-                    {match.id}
-                  </td>
-                  <td>{match.duration}</td>
-                  <td>{match.result}</td>
-                  <td>{match.wardsPlaced}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        matchesListisLoading ? (
+          <div>Loading</div>
+        ) : matchesListerror ? (
+          <div>error</div>
+        ) : (
+          <table>
+            <tbody>
+              <tr>
+                <td>MATCH ID</td>
+                <td>DURATION</td>
+                <td>RESULT</td>
+                <td>WARDS PLACED</td>
+              </tr>
+              {matchesList.map((match) => {
+                return (
+                  <tr key={match.match_id}>
+                    <td>{match.match_id}</td>
+                    <td>{match.duration}</td>
+                    <td>
+                      {match.radiant_win ? "Radiant Lose" : "Radiant Win"}
+                    </td>
+                    {/* <td>{match.radiant_win}</td> */}
+
+                    <td>{match.average_rank}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )
+      ) : recentmatchesListisLoading ? (
+        <div>Loading</div>
+      ) : recentmatchesListerror ? (
+        <div>error</div>
       ) : (
         <table>
-          <h1>RECENT MATCHES PLAYED</h1>
           <tbody>
             <tr>
               <td>MATCH ID</td>
@@ -129,20 +140,15 @@ export function ProMatchStats() {
               <td>RESULT</td>
               <td>WARDS PLACED</td>
             </tr>
-            {matchesList.map((match) => {
+            {recentmatchesList.map((match) => {
               return (
-                <tr>
-                  <td
-                    onClick={() => {
-                      dispatch(addPlayer(player));
-                      navigate("/player-stats");
-                    }}
-                  >
-                    {match.id}
-                  </td>
+                <tr key={match.match_id}>
+                  <td>{match.match_id}</td>
                   <td>{match.duration}</td>
-                  <td>{match.result}</td>
-                  <td>{match.wardsPlaced}</td>
+                  <td>{match.radiant_win ? "Radiant Lose" : "Radiant Win"}</td>
+
+                  {/* <td>{match.radiant_win}</td> */}
+                  <td>{match.average_rank}</td>
                 </tr>
               );
             })}

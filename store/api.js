@@ -1,20 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const productsApi = createApi({
+export const matchesApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://fakestoreapi.com",
+    baseUrl: "https://api.opendota.com/api",
   }),
   endpoints: (builder) => ({
-    getProducts: builder.query({
-      query: () => "/products",
+    getproPlayers: builder.query({
+      query: () => "/proPlayers",
     }),
-    getCategories: builder.query({
-      query: () => "/products/categories",
+    getmatchById: builder.query({
+      query: (account_id) => `/players/${account_id}/matches`,
     }),
-    getProductsByCategories: builder.query({
-      query:(theme)=>`/products/category/${theme}`
+    getRecentmatchById: builder.query({
+      query: (account_id) => `/players/${account_id}/recentMatches`,
     }),
   }),
 });
-export const {useGetProductsQuery, useGetCategoriesQuery, useGetProductsByCategoriesQuery} = productsApi
+export const {
+  useGetproPlayersQuery,
+  useGetmatchByIdQuery,
+  useGetRecentmatchByIdQuery,
+} = matchesApi;
