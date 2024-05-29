@@ -1,7 +1,9 @@
 import { useSelector } from "react-redux";
-import playerImage from "./assets/gh.jpg";
 import { useState } from "react";
-import { useGetRecentmatchByIdQuery, useGetmatchByIdQuery, useGetproPlayersQuery } from "../store/api";
+import {
+  useGetRecentmatchByIdQuery,
+  useGetmatchByIdQuery,
+} from "../store/api";
 
 export function ProMatchStats() {
   const playerStats = useSelector((state) => state.playerStats);
@@ -17,32 +19,66 @@ export function ProMatchStats() {
     error: recentmatchesListerror,
   } = useGetRecentmatchByIdQuery(playerStats.playerStats.account_id);
 
-  // let matchesList = [
-  //   {
-  //     id: 228337,
-  //     duration: "17:25",
-  //     result: "LOSE",
-  //     wardsPlaced: 5,
-  //   },
-  //   {
-  //     id: 228337,
-  //     duration: "17:25",
-  //     result: "LOSE",
-  //     wardsPlaced: 5,
-  //   },
-  //   {
-  //     id: 228337,
-  //     duration: "17:25",
-  //     result: "WIN",
-  //     wardsPlaced: 5,
-  //   },
-  //   {
-  //     id: 228337,
-  //     duration: "17:25",
-  //     result: "WIN",
-  //     wardsPlaced: 5,
-  //   },
-  // ];
+  const onPeriodChangedCb = (period) => {
+    // 1. fetch matches by period. It can be done using:
+    //    https://api.opendota.com/api/players/1296625/matches?&date={period}
+    //    For example: https://api.opendota.com/api/players/1296625/matches?&date=7 (get all maches for past 7 days)
+    const matches = [];
+
+    // 2. create a list of match IDs for this period
+    const matchIDs = matches.map((item) => item.match_id);
+
+    const total_obs_log = [];
+    const total_sen_log = [];
+
+    // 3. get wards data
+    for (let i = 0; i < matchIDs.length; i++) {
+      // 3.1 for every match ID, retrieve it's data from
+      //    https://api.opendota.com/api/matches/{match_id}
+      let matchData = {}
+      // 3.2 every match item (matchData) has players prop:
+      // {
+      //   "version": 21,
+      //   "match_id": 7764358501,
+      //   "draft_timings": [],
+      //   "players": [
+      //     {
+      //       "player_slot": 0,
+      //       "obs_placed": 12,
+      //       "sen_placed": 20,
+      //       ...
+      //       "account_id": 123
+      //     }
+      //   ]
+      //   ...
+      // }
+      //  retrieve player item from matchData.players using selected account_id
+      let current_player_match_data = matchData.players.map(p => p.account_id == 'account_id')
+      // 3.3 every player item has obs_log prop. information about wards, the time of their placement and position is stored here
+      //    create a list that contains all the information about each ward in each match. It should look like this:
+      //    [
+      //      { "time": 128, "type": "obs_log", "slot": 0, "x": 158.2, "y": 91.8, "z": 132.2, "entityleft": false, "ehandle": 788732, "key": "[158,92]", "player_slot": 0},
+      //      { "time": 129, "type": "obs_log", "slot": 0, "x": 158.2, "y": 91.8, "z": 132.2, "entityleft": false, "ehandle": 788732, "key": "[158,92]", "player_slot": 0},
+      //      ...
+      //    ]
+      for (let i = 0; i < current_player_match_data.obs_log; i++) {
+        let item = current_player_match_data.obs_log[i]
+        total_obs_log.push(item)
+      }
+      for (let i = 0; i < current_player_match_data.sen_log; i++) {
+        let item = current_player_match_data.sen_log[i]
+        total_sen_log.push(item)
+      }
+    }
+
+    // 4. invoke the dispayHeatMap(wardsData) method
+    dispayHeatMap(total_obs_log, total_sen_log);
+  };
+
+  const dispayHeatMap = (obs, sen) => {
+    // TODO: Implement this
+  };
+
   let obsLeft = 520;
   let sentryLeft = 220;
   return (
@@ -67,7 +103,7 @@ export function ProMatchStats() {
             setselectedTopic("stats");
           }}
         >
-          STATS
+          WARDING HEATMAP
         </button>
         <button
           onClick={() => {
@@ -85,9 +121,15 @@ export function ProMatchStats() {
           RECENT
         </button>
       </div>
+
       {selectedTopic == "stats" ? (
         <>
-          <h1>OVERALL STATS</h1>
+          <h1>WARDING HEATMAP</h1>
+          <h3>Period:</h3>
+          <div>
+            <button onClick={() => onPeriodChangedCb(7)}>Week</button>
+            <button onClick={() => onPeriodChangedCb(30)}>Month</button>
+          </div>
           <div className="dota_map">
             <div className="obs_ward" style={{ left: `${obsLeft}px` }}></div>
             <div
