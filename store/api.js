@@ -15,10 +15,15 @@ export const matchesApi = createApi({
     getRecentmatchById: builder.query({
       query: (account_id) => `/players/${account_id}/recentMatches`,
     }),
+    getMatchesByPeriod: builder.query({
+      query: (account_id, period) =>
+        `/players/${account_id}/matches?&date=${period}`,
+    }),
   }),
 });
 export const {
   useGetproPlayersQuery,
   useGetmatchByIdQuery,
   useGetRecentmatchByIdQuery,
+  useGetMatchesByPeriodQuery
 } = matchesApi;

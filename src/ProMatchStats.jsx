@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   useGetRecentmatchByIdQuery,
   useGetmatchByIdQuery,
+  useGetMatchesByPeriodQuery,
 } from "../store/api";
 
 export function ProMatchStats() {
@@ -18,11 +19,66 @@ export function ProMatchStats() {
     isLoading: recentmatchesListisLoading,
     error: recentmatchesListerror,
   } = useGetRecentmatchByIdQuery(playerStats.playerStats.account_id);
+  let {
+    data: matchesByPeriodList,
+    isLoading: matchesByPeriodListisLoading,
+    error: matchesByPeriodListerror,
+  } = useGetMatchesByPeriodQuery(playerStats.playerStats.account_id, 7);
+  function lol() {
+    let matches = [];
+
+    fetch("https://api.opendota.com/api/players/1296625/matches?&date=7")
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        matches = data;
+
+        let matchIDs = matches.map((item) => item.match_id);
+        console.log(playerStats.playerStats.account_id)
+        matchIDs.map((match_id)=>{
+          fetch(`https://api.opendota.com/api/matches/${match_id}`).then((res)=>{
+            return res.json()
+          }).then((data)=>{
+            let matchData = data
+            console.log(matchData.players)
+            let current_player_match_data = matchData.players.find(
+              (p) => p.account_id == playerStats.playerStats.account_id
+            );
+            console.log(current_player_match_data)
+          })
+        })
+        // for (let i = 0; i < matchIDs.length; i++) {
+        
+        //   // 3.3 every player item has obs_log prop. information about wards, the time of their placement and position is stored here
+        //   //    create a list that contains all the information about each ward in each match. It should look like this:
+        //   //    [
+        //   //      { "time": 128, "type": "obs_log", "slot": 0, "x": 158.2, "y": 91.8, "z": 132.2, "entityleft": false, "ehandle": 788732, "key": "[158,92]", "player_slot": 0},
+        //   //      { "time": 129, "type": "obs_log", "slot": 0, "x": 158.2, "y": 91.8, "z": 132.2, "entityleft": false, "ehandle": 788732, "key": "[158,92]", "player_slot": 0},
+        //   //      ...
+        //   //    ]
+        //   for (let i = 0; i < current_player_match_data.obs_log; i++) {
+        //     let item = current_player_match_data.obs_log[i];
+        //     total_obs_log.push(item);
+        //   }
+        //   for (let i = 0; i < current_player_match_data.sen_log; i++) {
+        //     let item = current_player_match_data.sen_log[i];
+        //     total_sen_log.push(item);
+        //   }
+        // }
+      });
+
+    let matchIDs = matches.map((item) => item.match_id);
+    console.log(matchIDs);
+  }
 
   const onPeriodChangedCb = (period) => {
     // 1. fetch matches by period. It can be done using:
     //    https://api.opendota.com/api/players/1296625/matches?&date={period}
     //    For example: https://api.opendota.com/api/players/1296625/matches?&date=7 (get all maches for past 7 days)
+    fetch("https://api.opendota.com/api/players/1296625/matches?&date=7").then(
+      (req, res) => {}
+    );
     const matches = [];
 
     // 2. create a list of match IDs for this period
@@ -35,7 +91,7 @@ export function ProMatchStats() {
     for (let i = 0; i < matchIDs.length; i++) {
       // 3.1 for every match ID, retrieve it's data from
       //    https://api.opendota.com/api/matches/{match_id}
-      let matchData = {}
+      let matchData = {};
       // 3.2 every match item (matchData) has players prop:
       // {
       //   "version": 21,
@@ -53,7 +109,9 @@ export function ProMatchStats() {
       //   ...
       // }
       //  retrieve player item from matchData.players using selected account_id
-      let current_player_match_data = matchData.players.map(p => p.account_id == 'account_id')
+      let current_player_match_data = matchData.players.map(
+        (p) => p.account_id == "account_id"
+      );
       // 3.3 every player item has obs_log prop. information about wards, the time of their placement and position is stored here
       //    create a list that contains all the information about each ward in each match. It should look like this:
       //    [
@@ -62,12 +120,12 @@ export function ProMatchStats() {
       //      ...
       //    ]
       for (let i = 0; i < current_player_match_data.obs_log; i++) {
-        let item = current_player_match_data.obs_log[i]
-        total_obs_log.push(item)
+        let item = current_player_match_data.obs_log[i];
+        total_obs_log.push(item);
       }
       for (let i = 0; i < current_player_match_data.sen_log; i++) {
-        let item = current_player_match_data.sen_log[i]
-        total_sen_log.push(item)
+        let item = current_player_match_data.sen_log[i];
+        total_sen_log.push(item);
       }
     }
 
@@ -101,6 +159,7 @@ export function ProMatchStats() {
         <button
           onClick={() => {
             setselectedTopic("stats");
+            lol();
           }}
         >
           WARDING HEATMAP
