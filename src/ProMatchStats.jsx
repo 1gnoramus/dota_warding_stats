@@ -23,13 +23,15 @@ export function ProMatchStats() {
   const [totalObsLog, setTotalObsLog] = useState([]);
   const [totalSenLog, setTotalSenLog] = useState([]);
 
+  let [period, setPeriod]=useState(7)
+
   //TESTING ARRAY
   //  const totalObsLog = [{x:130,y:250},{x:230,y:450},{x:430,y:350}]
 
 useEffect(() => {
     //GET ALL MATCHES LAST 7 DAYS THAT SELECTED PLAYER PLAYED
     fetch(
-      `https://api.opendota.com/api/players/${playerStats.playerStats.account_id}/matches?&date=7`
+      `https://api.opendota.com/api/players/${playerStats.playerStats.account_id}/matches?&date=${period}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -63,7 +65,7 @@ useEffect(() => {
         setTotalObsLog(newTotalObsLog);
         setTotalSenLog(newTotalSenLog);
       });
-  }, [playerStats.playerStats.account_id]);
+  }, [period]);
 
   return (
     <div className="playerStatsComponent">
@@ -110,8 +112,8 @@ useEffect(() => {
           <h1>WARDING HEATMAP</h1>
           <h3>Period:</h3>
           <div>
-            <button onClick={() => onPeriodChangedCb(7)}>Week</button>
-            <button onClick={() => onPeriodChangedCb(30)}>Month</button>
+            <button onClick={() => setPeriod(7)}>Week</button>
+            <button onClick={() => setPeriod(30)}>Month</button>
           </div>
           <div className="dota_map">
             {totalObsLog.map((obs_info, index) => (
