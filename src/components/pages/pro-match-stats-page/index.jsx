@@ -3,8 +3,9 @@ import { useState } from "react";
 import {
   useGetRecentmatchByIdQuery,
   useGetmatchByIdQuery,
-  useGetMatchesByPeriodQuery,
-} from "../store/api";
+  //   useGetMatchesByPeriodQuery,
+} from "src/store/api";
+import Default from "../_default";
 
 export function ProMatchStats() {
   const playerStats = useSelector((state) => state.playerStats);
@@ -19,11 +20,11 @@ export function ProMatchStats() {
     isLoading: recentmatchesListisLoading,
     error: recentmatchesListerror,
   } = useGetRecentmatchByIdQuery(playerStats.playerStats.account_id);
-  let {
-    data: matchesByPeriodList,
-    isLoading: matchesByPeriodListisLoading,
-    error: matchesByPeriodListerror,
-  } = useGetMatchesByPeriodQuery(playerStats.playerStats.account_id, 7);
+  //   let {
+  //     data: matchesByPeriodList,
+  //     isLoading: matchesByPeriodListisLoading,
+  //     error: matchesByPeriodListerror,
+  //   } = useGetMatchesByPeriodQuery(playerStats.playerStats.account_id, 7);
   function lol() {
     let matches = [];
 
@@ -35,21 +36,23 @@ export function ProMatchStats() {
         matches = data;
 
         let matchIDs = matches.map((item) => item.match_id);
-        console.log(playerStats.playerStats.account_id)
-        matchIDs.map((match_id)=>{
-          fetch(`https://api.opendota.com/api/matches/${match_id}`).then((res)=>{
-            return res.json()
-          }).then((data)=>{
-            let matchData = data
-            console.log(matchData.players)
-            let current_player_match_data = matchData.players.find(
-              (p) => p.account_id == playerStats.playerStats.account_id
-            );
-            console.log(current_player_match_data)
-          })
-        })
+        console.log(playerStats.playerStats.account_id);
+        matchIDs.map((match_id) => {
+          fetch(`https://api.opendota.com/api/matches/${match_id}`)
+            .then((res) => {
+              return res.json();
+            })
+            .then((data) => {
+              let matchData = data;
+              console.log(matchData.players);
+              let current_player_match_data = matchData.players.find(
+                (p) => p.account_id == playerStats.playerStats.account_id
+              );
+              console.log(current_player_match_data);
+            });
+        });
         // for (let i = 0; i < matchIDs.length; i++) {
-        
+
         //   // 3.3 every player item has obs_log prop. information about wards, the time of their placement and position is stored here
         //   //    create a list that contains all the information about each ward in each match. It should look like this:
         //   //    [
@@ -140,67 +143,98 @@ export function ProMatchStats() {
   let obsLeft = 520;
   let sentryLeft = 220;
   return (
-    <div className="playerStatsComponent">
-      <div className="player_info">
-        <img
-          style={{ width: "200px", height: "200px" }}
-          src={playerStats.playerStats.avatarfull}
-          alt=""
-        />
-        <div>
-          <h1>Player: {playerStats.playerStats.name}</h1>
-          <h3>Team: {playerStats.playerStats.team_name}</h3>
-          <h3>Position: {playerStats.playerStats.fantasy_role}</h3>
-          <h3>Account ID: {playerStats.playerStats.account_id}</h3>
-        </div>
-        <div></div>
-      </div>
-      <div className="playerStats_nav">
-        <button
-          onClick={() => {
-            setselectedTopic("stats");
-            lol();
-          }}
-        >
-          WARDING HEATMAP
-        </button>
-        <button
-          onClick={() => {
-            setselectedTopic("matches");
-            console.log(matchesList);
-          }}
-        >
-          MATCHES
-        </button>
-        <button
-          onClick={() => {
-            setselectedTopic("recent");
-          }}
-        >
-          RECENT
-        </button>
-      </div>
-
-      {selectedTopic == "stats" ? (
-        <>
-          <h1>WARDING HEATMAP</h1>
-          <h3>Period:</h3>
+    <Default>
+      <div className="playerStatsComponent">
+        <div className="player_info">
+          <img
+            style={{ width: "200px", height: "200px" }}
+            src={playerStats.playerStats.avatarfull}
+            alt=""
+          />
           <div>
-            <button onClick={() => onPeriodChangedCb(7)}>Week</button>
-            <button onClick={() => onPeriodChangedCb(30)}>Month</button>
+            <h1>Player: {playerStats.playerStats.name}</h1>
+            <h3>Team: {playerStats.playerStats.team_name}</h3>
+            <h3>Position: {playerStats.playerStats.fantasy_role}</h3>
+            <h3>Account ID: {playerStats.playerStats.account_id}</h3>
           </div>
-          <div className="dota_map">
-            <div className="obs_ward" style={{ left: `${obsLeft}px` }}></div>
-            <div
-              className="sentry_ward"
-              style={{ left: `${sentryLeft}px` }}
-            ></div>
-          </div>
-        </>
-      ) : selectedTopic == "matches" ? (
-        matchesListisLoading ? (
+          <div></div>
+        </div>
+        <div className="playerStats_nav">
+          <button
+            onClick={() => {
+              setselectedTopic("stats");
+              lol();
+            }}
+          >
+            WARDING HEATMAP
+          </button>
+          <button
+            onClick={() => {
+              setselectedTopic("matches");
+              console.log(matchesList);
+            }}
+          >
+            MATCHES
+          </button>
+          <button
+            onClick={() => {
+              setselectedTopic("recent");
+            }}
+          >
+            RECENT
+          </button>
+        </div>
+
+        {selectedTopic == "stats" ? (
+          <>
+            <h1>WARDING HEATMAP</h1>
+            <h3>Period:</h3>
+            <div>
+              <button onClick={() => onPeriodChangedCb(7)}>Week</button>
+              <button onClick={() => onPeriodChangedCb(30)}>Month</button>
+            </div>
+            <div className="dota_map">
+              <div className="obs_ward" style={{ left: `${obsLeft}px` }}></div>
+              <div
+                className="sentry_ward"
+                style={{ left: `${sentryLeft}px` }}
+              ></div>
+            </div>
+          </>
+        ) : selectedTopic == "matches" ? (
+          matchesListisLoading ? (
+            <div>Loading</div>
+          ) : matchesListerror ? (
+            <div>error</div>
+          ) : (
+            <table>
+              <tbody>
+                <tr>
+                  <td>MATCH ID</td>
+                  <td>DURATION</td>
+                  <td>RESULT</td>
+                  <td>WARDS PLACED</td>
+                </tr>
+                {matchesList.map((match) => {
+                  return (
+                    <tr key={match.match_id}>
+                      <td>{match.match_id}</td>
+                      <td>{match.duration}</td>
+                      <td>
+                        {match.radiant_win ? "Radiant Lose" : "Radiant Win"}
+                      </td>
+                      {/* <td>{match.radiant_win}</td> */}
+
+                      <td>{match.average_rank}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )
+        ) : recentmatchesListisLoading ? (
           <div>Loading</div>
-        ) : matchesListerror ? (
+        ) : recentmatchesListerror ? (
           <div>error</div>
         ) : (
           <table>
@@ -211,7 +245,7 @@ export function ProMatchStats() {
                 <td>RESULT</td>
                 <td>WARDS PLACED</td>
               </tr>
-              {matchesList.map((match) => {
+              {recentmatchesList.map((match) => {
                 return (
                   <tr key={match.match_id}>
                     <td>{match.match_id}</td>
@@ -219,43 +253,16 @@ export function ProMatchStats() {
                     <td>
                       {match.radiant_win ? "Radiant Lose" : "Radiant Win"}
                     </td>
-                    {/* <td>{match.radiant_win}</td> */}
 
+                    {/* <td>{match.radiant_win}</td> */}
                     <td>{match.average_rank}</td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
-        )
-      ) : recentmatchesListisLoading ? (
-        <div>Loading</div>
-      ) : recentmatchesListerror ? (
-        <div>error</div>
-      ) : (
-        <table>
-          <tbody>
-            <tr>
-              <td>MATCH ID</td>
-              <td>DURATION</td>
-              <td>RESULT</td>
-              <td>WARDS PLACED</td>
-            </tr>
-            {recentmatchesList.map((match) => {
-              return (
-                <tr key={match.match_id}>
-                  <td>{match.match_id}</td>
-                  <td>{match.duration}</td>
-                  <td>{match.radiant_win ? "Radiant Lose" : "Radiant Win"}</td>
-
-                  {/* <td>{match.radiant_win}</td> */}
-                  <td>{match.average_rank}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
-    </div>
+        )}
+      </div>
+    </Default>
   );
 }
