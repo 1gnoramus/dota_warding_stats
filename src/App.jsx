@@ -6,11 +6,13 @@ import { OverallPage } from "components/pages/overall-page";
 import { ProMatchStats } from "components/pages/pro-match-stats-page";
 import { TestPage } from "components/pages/test-page";
 import "./styles.scss";
+import Default from "./components/pages/_default";
 
 function App() {
   return (
     <div className="main">
       <Routes>
+        <Route path="/" element={<Default></Default>}></Route>
         <Route path="/pro" element={<ProPlayersPage></ProPlayersPage>}></Route>
         <Route
           path="/public"
