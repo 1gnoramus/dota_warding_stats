@@ -35,10 +35,12 @@ export function ProMatchStats() {
     )
       .then((res) => res.json())
       .then((data) => {
+        //CREATING NEW FILE AND SAVE DATA IN THIS JSON-FILE
         const blob = new Blob([JSON.stringify(data)], {
           type: "application/json",
         });
         saveAs(blob, "matches.json");
+
         //GET ONLY MATCH'S IDs
         let matchIDs = data.map((item) => item.match_id);
         return Promise.all(

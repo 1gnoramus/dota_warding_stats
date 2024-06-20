@@ -1,32 +1,25 @@
 import { useDispatch } from "react-redux";
 import { addPlayer } from "src/store/reducers";
 import { useNavigate } from "react-router-dom";
-import { useGetproPlayersQuery } from "src/store/api";
 import Default from "../_default";
+import { useEffect, useState } from "react";
+import proPlayersData from "src/json-files/proPlayers.json"; // Импортируем JSON-файл
 
 export function ProPlayersPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  //ВЫТАСКИВАЕМ СПИСОК ВСЕХ ПРО ИГРОКОВ
-  let {
-    data: proPlayersList,
-    isLoading: proPlayersListisLoading,
-    error: proPlayersListisserror,
-  } = useGetproPlayersQuery();
+  const [proPlayersList, setProPlayersList] = useState([]);
 
-  //ФИЛЬТРАЦИЯ ИГРОКОВ (КАК-ТО НАДО ИХ ПО РОЛЯМ ФИЛЬТРОВАТЬ. FANTASY_ROLE - ЭТО НЕ РОЛЬ Я ТАК ПОНИМАЮ)
-  // let suppPlayersList = proPlayersList.filter((player) => {
-  //   return player.team_name == "Team Spirit";
-  // });
+  useEffect(() => {
+    setProPlayersList(proPlayersData);
+  });
 
   return (
     <Default>
       <div className="proplayers_page">
-        {proPlayersListisLoading ? (
+        {proPlayersList.length === 0 ? (
           <div>Loading</div>
-        ) : proPlayersListisserror ? (
-          <div>error</div>
         ) : (
           <table>
             <tbody>
