@@ -7,6 +7,7 @@ import {
 } from "src/store/api";
 import Default from "../_default";
 import { saveAs } from "file-saver";
+import matchesData from "src/json-files/matches.json";
 
 export function ProMatchStats() {
   const playerStats = useSelector((state) => state.playerStats);
@@ -36,10 +37,10 @@ export function ProMatchStats() {
       .then((res) => res.json())
       .then((data) => {
         //CREATING NEW FILE AND SAVE DATA IN THIS JSON-FILE
-        const blob = new Blob([JSON.stringify(data)], {
-          type: "application/json",
-        });
-        saveAs(blob, "matches.json");
+        // const blob = new Blob([JSON.stringify(data)], {
+        //   type: "application/json",
+        // });
+        // saveAs(blob, "matches.json");
 
         //GET ONLY MATCH'S IDs
         let matchIDs = data.map((item) => item.match_id);
