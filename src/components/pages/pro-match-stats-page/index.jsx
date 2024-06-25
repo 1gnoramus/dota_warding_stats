@@ -8,6 +8,7 @@ import {
 import Default from "../_default";
 import { saveAs } from "file-saver";
 import matchesData from "src/json-files/matches.json";
+import matchesId from "src/json-files/matches_id.json";
 
 export function ProMatchStats() {
   const playerStats = useSelector((state) => state.playerStats);
@@ -26,11 +27,7 @@ export function ProMatchStats() {
   const [totalObsLog, setTotalObsLog] = useState([]);
   const [totalSenLog, setTotalSenLog] = useState([]);
 
-  //TESTING ARRAY
-  //  const totalObsLog = [{x:130,y:250},{x:230,y:450},{x:430,y:350}]
-
   useEffect(() => {
-    //GET ALL MATCHES LAST 7 DAYS THAT SELECTED PLAYER PLAYED
     fetch(
       `https://api.opendota.com/api/players/${playerStats.playerStats.account_id}/matches?&date=7`
     )
@@ -52,22 +49,28 @@ export function ProMatchStats() {
           )
         );
       })
-      .then((matchesData) => {
+      .then((m_data) => {
         const newTotalObsLog = [];
         const newTotalSenLog = [];
-        matchesData.forEach((data) => {
+        matchesId.forEach((data) => {
           //GET MATCH INFO OF THE SELECTED PLAYER ONLY
           let current_player_match_data = data.players.find(
             (p) => p.account_id == playerStats.playerStats.account_id
           );
+
           //PUSH OBS INFO OF SELECTED PLAYER IN ARRAY
-          current_player_match_data.obs_log.map((i) => {
-            newTotalObsLog.push(i);
-          });
+          if (current_player_match_data.obs_log != undefined) {
+            current_player_match_data.obs_log.map((i) => {
+              newTotalObsLog.push(i);
+            });
+          }
           //PUSH SENTRY INFO OF SELECTED PLAYER IN ARRAY
-          current_player_match_data.sen_log.map((i) => {
-            newTotalSenLog.push(i);
-          });
+
+          if (current_player_match_data.sen_log != undefined) {
+            current_player_match_data.sen_log.map((i) => {
+              newTotalSenLog.push(i);
+            });
+          }
         });
         setTotalObsLog(newTotalObsLog);
         setTotalSenLog(newTotalSenLog);
@@ -103,7 +106,6 @@ export function ProMatchStats() {
           <button
             onClick={() => {
               setselectedTopic("matches");
-              console.log(matchesList);
             }}
           >
             MATCHES
@@ -133,6 +135,15 @@ export function ProMatchStats() {
                   style={{ left: `${obs_info.x}px`, top: `${obs_info.y}px` }}
                 ></div>
               ))}
+              {totalSenLog.map((sen_info, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="sentry_ward"
+                    style={{ left: `${sen_info.x}px`, top: `${sen_info.y}px` }}
+                  ></div>
+                );
+              })}
             </div>
           </>
         ) : selectedTopic == "matches" ? (
