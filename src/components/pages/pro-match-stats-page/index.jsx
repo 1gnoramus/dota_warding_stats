@@ -132,7 +132,10 @@ export function ProMatchStats() {
                 <div
                   key={index}
                   className="obs_ward"
-                  style={{ left: `${obs_info.x}px`, top: `${obs_info.y}px` }}
+                  style={{
+                    left: `${(obs_info.x * 800) / 200}px`,
+                    top: `${(obs_info.y * 800) / 200}px`,
+                  }}
                 ></div>
               ))}
               {totalSenLog.map((sen_info, index) => {
@@ -140,7 +143,10 @@ export function ProMatchStats() {
                   <div
                     key={index}
                     className="sentry_ward"
-                    style={{ left: `${sen_info.x}px`, top: `${sen_info.y}px` }}
+                    style={{
+                      left: `${(sen_info.x * 800) / 200}px`,
+                      top: `${(sen_info.y * 800) / 200}px`,
+                    }}
                   ></div>
                 );
               })}
