@@ -3,7 +3,7 @@ import { addPlayer } from "src/store/reducers";
 import { useNavigate } from "react-router-dom";
 import Default from "../_default";
 import { useEffect, useState } from "react";
-import proPlayersData from "src/json-files/proPlayers.json"; // Импортируем JSON-файл
+import proPlayersData from "src/json-files/proPlayers.json";
 
 export function ProPlayersPage() {
   const dispatch = useDispatch();
