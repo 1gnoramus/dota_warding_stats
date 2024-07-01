@@ -44,24 +44,24 @@ nav {
 }
 .dota_map {
   position: relative;
-  width: 800px;
-  height: 800px;
-  background: url("./assets/dota_map550.png") no-repeat center;
+  width: 220px;
+  height: 220px;
+  background: url("./assets/map_0.png") no-repeat center;
   background-size: cover;
 }
 .obs_ward {
   position: absolute;
   top: 0;
-  height: 20px;
-  width: 20px;
+  height: 2px;
+  width: 2px;
   border-radius: 20px;
   background-color: #d7d716;
 }
 .sentry_ward {
   position: absolute;
   top: 0;
-  height: 20px;
-  width: 20px;
+  height: 2px;
+  width: 2px;
   border-radius: 20px;
   background-color: #1690d7;
 }
