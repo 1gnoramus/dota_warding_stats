@@ -173,8 +173,8 @@ export function ProMatchStats() {
                     key={index}
                     className="sentry_ward"
                     style={{
-                      left: `${sen_info.x / 1.15}px`,
-                      top: `${(220 - sen_info.y) * 1.9}px`,
+                      left: `${sen_info.x / 1.25}px`,
+                      top: `${(220 - sen_info.y) * 1.8}px`,
                     }}
                   >
                     <div className="info">
