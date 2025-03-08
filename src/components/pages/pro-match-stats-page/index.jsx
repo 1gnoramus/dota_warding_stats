@@ -7,6 +7,8 @@ import {
 } from "src/store/api";
 import Default from "../_default";
 import { saveAs } from "file-saver";
+import matchesData from "src/json-files/matches.json";
+import matchesId from "src/json-files/matches_id.json";
 
 export function ProMatchStats() {
   const playerStats = useSelector((state) => state.playerStats);
@@ -25,47 +27,78 @@ export function ProMatchStats() {
   const [totalObsLog, setTotalObsLog] = useState([]);
   const [totalSenLog, setTotalSenLog] = useState([]);
 
-  //TESTING ARRAY
-  //  const totalObsLog = [{x:130,y:250},{x:230,y:450},{x:430,y:350}]
-
   useEffect(() => {
-    //GET ALL MATCHES LAST 7 DAYS THAT SELECTED PLAYER PLAYED
     fetch(
       `https://api.opendota.com/api/players/${playerStats.playerStats.account_id}/matches?&date=7`
     )
       .then((res) => res.json())
       .then((data) => {
         //CREATING NEW FILE AND SAVE DATA IN THIS JSON-FILE
-        const blob = new Blob([JSON.stringify(data)], {
-          type: "application/json",
-        });
-        saveAs(blob, "matches.json");
-
+        // const blob = new Blob([JSON.stringify(data)], {
+        //   type: "application/json",
+        // });
+        // saveAs(blob, "matches.json");
         //GET ONLY MATCH'S IDs
-        let matchIDs = data.map((item) => item.match_id);
-        return Promise.all(
-          matchIDs.map((match_id) =>
-            fetch(`https://api.opendota.com/api/matches/${match_id}`).then(
-              (res) => res.json()
-            )
-          )
-        );
+        // let matchIDs = data.map((item) => item.match_id);
+        // return Promise.all(
+        //   matchIDs.map((match_id) =>
+        //     fetch(`https://api.opendota.com/api/matches/${match_id}`).then(
+        //       (res) => res.json()
+        //     )
+        //   )
+        // );
       })
-      .then((matchesData) => {
+      .then((m_data) => {
         const newTotalObsLog = [];
         const newTotalSenLog = [];
-        matchesData.forEach((data) => {
-          //GET MATCH INFO OF THE SELECTED PLAYER ONLY
-          let current_player_match_data = data.players.find(
+        //GET MATCH INFO OF THE SELECTED PLAYER ONLY
+        // let current_player_match_data = matchesId.players.find(
+        //   (p) => p.account_id == playerStats.playerStats.account_id
+        // );
+
+        matchesId.forEach((data) => {
+          let sad = matchesId[0];
+          console.log(sad);
+
+          let asdasd = sad.players.find(
             (p) => p.account_id == playerStats.playerStats.account_id
           );
-          //PUSH OBS INFO OF SELECTED PLAYER IN ARRAY
-          current_player_match_data.obs_log.map((i) => {
-            newTotalObsLog.push(i);
-          });
+
+          if (asdasd.obs_log != undefined) {
+            asdasd.obs_log.map((i) => {
+              newTotalObsLog.push(i);
+            });
+          }
+
           //PUSH SENTRY INFO OF SELECTED PLAYER IN ARRAY
-          current_player_match_data.sen_log.map((i) => {
-            newTotalSenLog.push(i);
+          if (asdasd.sen_log != undefined) {
+            asdasd.sen_log.map((i) => {
+              newTotalSenLog.push(i);
+            });
+          }
+          // console.log(asdasd);
+          console.log(newTotalSenLog);
+
+          matchesId.map((match) => {
+            // let current_player_match_data = match.players.find(
+            //   (p) => p.account_id == playerStats.playerStats.account_id
+            // );
+
+            let current_player_match_data = match.players[0];
+            // console.log(current_player_match_data);
+            //PUSH OBS INFO OF SELECTED PLAYER IN ARRAY
+            // if (current_player_match_data.obs_log != undefined) {
+            //   current_player_match_data.obs_log.map((i) => {
+            //     newTotalObsLog.push(i);
+            //   });
+            // }
+
+            // //PUSH SENTRY INFO OF SELECTED PLAYER IN ARRAY
+            // if (current_player_match_data.sen_log != undefined) {
+            //   current_player_match_data.sen_log.map((i) => {
+            //     newTotalSenLog.push(i);
+            //   });
+            // }
           });
         });
         setTotalObsLog(newTotalObsLog);
@@ -102,7 +135,6 @@ export function ProMatchStats() {
           <button
             onClick={() => {
               setselectedTopic("matches");
-              console.log(matchesList);
             }}
           >
             MATCHES
@@ -129,9 +161,28 @@ export function ProMatchStats() {
                 <div
                   key={index}
                   className="obs_ward"
-                  style={{ left: `${obs_info.x}px`, top: `${obs_info.y}px` }}
+                  style={{
+                    left: `${obs_info.x}px`,
+                    top: `${obs_info.y}px`,
+                  }}
                 ></div>
               ))}
+              {totalSenLog.map((sen_info, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="sentry_ward"
+                    style={{
+                      left: `${sen_info.x / 1.25}px`,
+                      top: `${(220 - sen_info.y) * 1.8}px`,
+                    }}
+                  >
+                    <div className="info">
+                      <p style={{ fontSize: "5px" }}>{sen_info.time}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </>
         ) : selectedTopic == "matches" ? (
